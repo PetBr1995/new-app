@@ -23,6 +23,7 @@ function ordenarProdutos(produtos, ordenacao) {
 }
 
 const emptyEditForm = {
+  codigoBarras: '',
   nome: '',
   dataEntrada: '',
   pesoKg: '',
@@ -32,6 +33,7 @@ const emptyEditForm = {
 
 function mapProdutoParaForm(produto) {
   return {
+    codigoBarras: produto.codigoBarras || '',
     nome: produto.nome,
     dataEntrada: produto.dataEntrada,
     pesoKg: String(produto.pesoKg),
@@ -58,6 +60,7 @@ function parseProdutoForm(form) {
   }
 
   return {
+    codigoBarras: form.codigoBarras.trim(),
     nome: form.nome.trim(),
     dataEntrada: form.dataEntrada,
     pesoKg: peso,
@@ -111,7 +114,7 @@ export function ListaPage({ produtosComStatus, onAtualizar, onRemover, onLimpar 
     setFormEdicao((estadoAnterior) => ({ ...estadoAnterior, [name]: value }))
   }
 
-  const salvarEdicao = (event, id) => {
+  const salvarEdicao = async (event, id) => {
     event.preventDefault()
 
     const payload = parseProdutoForm(formEdicao)
@@ -119,25 +122,29 @@ export function ListaPage({ produtosComStatus, onAtualizar, onRemover, onLimpar 
       return
     }
 
-    onAtualizar(id, payload)
-    cancelarEdicao()
-  }
-
-  const removerProduto = (id) => {
-    onRemover(id)
-    if (produtoEmEdicao === id) {
+    const ok = await onAtualizar(id, payload)
+    if (ok) {
       cancelarEdicao()
     }
   }
 
-  const limparProdutos = () => {
+  const removerProduto = async (id) => {
+    const ok = await onRemover(id)
+    if (ok && produtoEmEdicao === id) {
+      cancelarEdicao()
+    }
+  }
+
+  const limparProdutos = async () => {
     const confirmou = window.confirm('Deseja remover todos os produtos cadastrados?')
     if (!confirmou) {
       return
     }
 
-    onLimpar()
-    cancelarEdicao()
+    const ok = await onLimpar()
+    if (ok) {
+      cancelarEdicao()
+    }
   }
 
   return (

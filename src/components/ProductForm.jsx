@@ -3,6 +3,16 @@ export function ProductForm({ form, onChange, onSubmit, submitLabel, className =
     <form className={className} onSubmit={onSubmit}>
       <div className="form-grid">
         <label>
+          Codigo de barras
+          <input
+            name="codigoBarras"
+            value={form.codigoBarras}
+            onChange={onChange}
+            placeholder="Ex: 7890000000000"
+          />
+        </label>
+
+        <label>
           Nome
           <input
             name="nome"

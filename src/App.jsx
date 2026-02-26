@@ -4,9 +4,11 @@ import { Tabs } from './components/Tabs'
 import { useProducts } from './hooks/useProducts'
 import { CadastroPage } from './pages/CadastroPage'
 import { ListaPage } from './pages/ListaPage'
+import { productDataSource } from './services/productRepository'
 import { dataHoje } from './utils/date'
 
 const initialForm = {
+  codigoBarras: '',
   nome: '',
   dataEntrada: dataHoje(),
   pesoKg: '',
@@ -32,6 +34,7 @@ function parseProdutoForm(form) {
   }
 
   return {
+    codigoBarras: form.codigoBarras.trim(),
     nome: form.nome.trim(),
     dataEntrada: form.dataEntrada,
     pesoKg: peso,
@@ -43,7 +46,8 @@ function parseProdutoForm(form) {
 function App() {
   const [telaAtiva, setTelaAtiva] = useState('cadastro')
   const [form, setForm] = useState(initialForm)
-  const { produtosComStatus, criarProduto, atualizarProduto, removerProduto, limparProdutos } = useProducts()
+  const { produtosComStatus, isLoading, error, criarProduto, atualizarProduto, removerProduto, limparProdutos } =
+    useProducts()
 
   const totalAlertas = useMemo(
     () =>
@@ -59,7 +63,7 @@ function App() {
     setForm((estadoAnterior) => ({ ...estadoAnterior, [name]: value }))
   }
 
-  const handleSubmitCadastro = (event) => {
+  const handleSubmitCadastro = async (event) => {
     event.preventDefault()
 
     const payload = parseProdutoForm(form)
@@ -67,21 +71,34 @@ function App() {
       return
     }
 
-    criarProduto(payload)
-    setForm(initialForm)
+    const ok = await criarProduto(payload)
+    if (ok) {
+      setForm(initialForm)
+    }
   }
 
   return (
     <main className="poc-container">
       <header>
         <p className="kicker">POC - ENTRADA DE PRODUTOS</p>
-        <h1>Cadastro simples com persistencia em localStorage</h1>
+        <h1>Cadastro simples pronto para backend</h1>
+        <p className="fonte-dados">Fonte de dados ativa: {productDataSource}</p>
       </header>
+
+      {isLoading && <p className="feedback">Carregando produtos...</p>}
+      {error && <p className="feedback erro">{error}</p>}
 
       <Tabs telaAtiva={telaAtiva} onChange={setTelaAtiva} totalAlertas={totalAlertas} />
 
       {telaAtiva === 'cadastro' && (
-        <CadastroPage form={form} onChange={handleChangeCadastro} onSubmit={handleSubmitCadastro} />
+        <CadastroPage
+          form={form}
+          onChange={handleChangeCadastro}
+          onSetCodigoBarras={(codigoBarras) =>
+            setForm((estadoAnterior) => ({ ...estadoAnterior, codigoBarras }))
+          }
+          onSubmit={handleSubmitCadastro}
+        />
       )}
 
       {telaAtiva === 'lista' && (

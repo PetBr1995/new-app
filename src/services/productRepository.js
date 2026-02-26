@@ -1,51 +1,8 @@
-import { STORAGE_KEY } from '../constants/product'
+import { productApiRepository } from './productApiRepository'
+import { productLocalRepository } from './productLocalRepository'
 
-function parseProdutos(valor) {
-  if (!valor) {
-    return []
-  }
+const DATA_SOURCE = import.meta.env.VITE_PRODUCTS_DATA_SOURCE || 'local'
 
-  try {
-    const produtos = JSON.parse(valor)
-    return Array.isArray(produtos) ? produtos : []
-  } catch {
-    return []
-  }
-}
+export const productRepository = DATA_SOURCE === 'api' ? productApiRepository : productLocalRepository
 
-function salvarProdutos(produtos) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(produtos))
-}
-
-export const productRepository = {
-  list() {
-    return parseProdutos(localStorage.getItem(STORAGE_KEY))
-  },
-
-  create(produto) {
-    const produtos = this.list()
-    const novoProduto = { ...produto, id: crypto.randomUUID() }
-    const atualizado = [novoProduto, ...produtos]
-    salvarProdutos(atualizado)
-    return atualizado
-  },
-
-  update(id, payload) {
-    const atualizado = this.list().map((produto) =>
-      produto.id === id ? { ...produto, ...payload } : produto
-    )
-    salvarProdutos(atualizado)
-    return atualizado
-  },
-
-  remove(id) {
-    const atualizado = this.list().filter((produto) => produto.id !== id)
-    salvarProdutos(atualizado)
-    return atualizado
-  },
-
-  clear() {
-    salvarProdutos([])
-    return []
-  },
-}
+export const productDataSource = DATA_SOURCE

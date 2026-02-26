@@ -17,10 +17,29 @@
 
 h1 {
   margin-top: 0.3rem;
-  margin-bottom: 1.3rem;
+  margin-bottom: 0.4rem;
   font-size: 1.55rem;
   line-height: 1.2;
   color: #11203a;
+}
+
+.fonte-dados {
+  margin: 0 0 1rem;
+  color: #42556f;
+  font-size: 0.9rem;
+}
+
+.feedback {
+  margin: 0 0 0.8rem;
+  border-radius: 8px;
+  padding: 0.55rem 0.75rem;
+  background: #edf4ff;
+  color: #173662;
+}
+
+.feedback.erro {
+  background: #ffecee;
+  color: #7f1f26;
 }
 
 .tabs {
@@ -66,6 +85,43 @@ h1 {
   border-radius: 10px;
   padding: 1rem;
   background: #fbfdff;
+}
+
+.scanner-box {
+  border: 1px solid #dde6ee;
+  border-radius: 10px;
+  padding: 1rem;
+  background: #f8fbff;
+  margin-bottom: 0.8rem;
+}
+
+.scanner-acoes {
+  display: flex;
+  gap: 0.6rem;
+}
+
+.botao-scanner {
+  margin: 0;
+  min-height: 38px;
+  background: #1f6a43;
+}
+
+.scanner-video {
+  width: 100%;
+  margin-top: 0.7rem;
+  border-radius: 8px;
+  border: 1px solid #cfd9e5;
+  background: #0a0f1b;
+}
+
+.scanner-status {
+  margin: 0.6rem 0 0;
+  font-size: 0.88rem;
+  color: #2b405e;
+}
+
+.scanner-status.erro {
+  color: #90242c;
 }
 
 .form-grid {

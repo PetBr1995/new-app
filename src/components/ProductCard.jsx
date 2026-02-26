@@ -23,6 +23,10 @@ export function ProductCard({
           </div>
 
           <div className="linha">
+            <span>Codigo de barras</span>
+            <strong>{produto.codigoBarras || '-'}</strong>
+          </div>
+          <div className="linha">
             <span>Data de entrada</span>
             <strong>{formatarData(produto.dataEntrada)}</strong>
           </div>
