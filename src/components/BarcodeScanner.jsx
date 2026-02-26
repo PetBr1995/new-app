@@ -11,8 +11,12 @@ export function BarcodeScanner({ onDetected }) {
   const [isScanning, setIsScanning] = useState(false)
   const [status, setStatus] = useState('')
 
-  const isSupported = useMemo(() => {
-    return typeof window !== 'undefined' && 'BarcodeDetector' in window && navigator.mediaDevices
+  const hasCameraSupport = useMemo(() => {
+    return typeof window !== 'undefined' && !!navigator.mediaDevices?.getUserMedia
+  }, [])
+
+  const hasNativeBarcodeDetector = useMemo(() => {
+    return typeof window !== 'undefined' && 'BarcodeDetector' in window
   }, [])
 
   const stopScan = () => {
@@ -57,8 +61,8 @@ export function BarcodeScanner({ onDetected }) {
   }
 
   const startScan = async () => {
-    if (!isSupported) {
-      setStatus('Leitura por camera nao suportada neste navegador.')
+    if (!hasCameraSupport) {
+      setStatus('Este navegador nao permite acesso a camera.')
       return
     }
 
@@ -70,7 +74,7 @@ export function BarcodeScanner({ onDetected }) {
 
       streamRef.current = stream
 
-      if (!detectorRef.current) {
+      if (hasNativeBarcodeDetector && !detectorRef.current) {
         detectorRef.current = new window.BarcodeDetector({ formats: FORMATS })
       }
 
@@ -81,11 +85,20 @@ export function BarcodeScanner({ onDetected }) {
 
       video.srcObject = stream
       await video.play()
-      setStatus('Aponte a camera para o codigo de barras.')
       setIsScanning(true)
-      rafRef.current = requestAnimationFrame(tick)
+
+      if (hasNativeBarcodeDetector) {
+        setStatus('Aponte a camera para o codigo de barras.')
+        rafRef.current = requestAnimationFrame(tick)
+      } else {
+        setStatus(
+          'Camera ativa, mas leitura automatica nao suportada neste navegador. Digite o codigo manualmente.'
+        )
+      }
     } catch {
-      setStatus('Nao foi possivel acessar a camera.')
+      setStatus(
+        'Nao foi possivel acessar a camera. Use https ou localhost e verifique a permissao da camera.'
+      )
       stopScan()
     }
   }
@@ -113,7 +126,11 @@ export function BarcodeScanner({ onDetected }) {
 
       {isScanning && <video ref={videoRef} className="scanner-video" muted playsInline />}
       {status && <p className="scanner-status">{status}</p>}
-      {!isSupported && <p className="scanner-status erro">Seu navegador nao suporta BarcodeDetector.</p>}
+      {!hasNativeBarcodeDetector && (
+        <p className="scanner-status erro">
+          Leitura automatica indisponivel neste navegador sem biblioteca extra.
+        </p>
+      )}
     </section>
   )
 }
