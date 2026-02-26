@@ -1,0 +1,7 @@
+export const STORAGE_KEY = 'poc_produtos'
+
+export const PRODUCT_STATUS = {
+  EXPIRED: 'VENCIDO',
+  NEAR_EXPIRY: 'PROXIMO DO VENCIMENTO',
+  VALID: 'DENTRO DA VALIDADE',
+}

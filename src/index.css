@@ -1,0 +1,27 @@
+:root {
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-width: 320px;
+  min-height: 100vh;
+  padding: 1rem;
+  background: linear-gradient(135deg, #eef3f9 0%, #f8fbff 100%);
+}
+
+#root {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
